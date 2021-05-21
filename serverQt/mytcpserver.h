@@ -19,6 +19,7 @@ class MyTcpServer : public QObject
 public:
     explicit MyTcpServer(QObject *parent = nullptr);
     ~MyTcpServer();
+    QSqlDatabase db;
     QMap<std::string, std::string> stats;
 public slots:
     void slotNewConnection();
