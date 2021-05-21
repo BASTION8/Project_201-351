@@ -5,6 +5,7 @@
 #include <QTcpSocket>
 #include <QSqlRecord>
 #include <QSql>
+#include <map>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlField>
@@ -18,6 +19,7 @@ class MyTcpServer : public QObject
 public:
     explicit MyTcpServer(QObject *parent = nullptr);
     ~MyTcpServer();
+    QMap<std::string, std::string> stats;
 public slots:
     void slotNewConnection();
     void slotClientDisconnected();
