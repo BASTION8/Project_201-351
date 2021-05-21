@@ -25,13 +25,14 @@ MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
         server_status=1;
         qDebug() << "server is started";
     }
-    
+
     db = QSqlDatabase::addDatabase("QPSQL");
     db.setHostName("127.0.0.1");
     db.setDatabaseName("seabattle");
     db.setUserName("postgres");
-    db.setPassword("****");// здесь поставить свой пароль от базы данных, который вводится при запуске
+    db.setPassword("mabqteq5s2me");// здесь поставить пароль от базы данных, который вводится при запуске
     db.open();
+
 }
 
 void MyTcpServer::slotNewConnection(){
@@ -47,7 +48,7 @@ void MyTcpServer::slotNewConnection(){
 
 void MyTcpServer::slotServerRead(){
     QTcpSocket *clientSocket = (QTcpSocket*)sender();
-    int id = (int)clientSocket->socketDescriptor();
+  //  int id = (int)clientSocket->socketDescriptor();
     QByteArray array;
     std::string message="";
     while(clientSocket->bytesAvailable()>0)
@@ -78,7 +79,7 @@ void MyTcpServer::slotServerRead(){
                 <<"password = "<< QString::fromStdString(pass)
                <<"result = " << authorize(log,pass);
         array.clear();
-        array.append(authorize(log,pass));
+        array.append(authorize(log,pass).toUtf8());
         clientSocket -> write(array);
     }
     if(func == "start") {
@@ -103,14 +104,14 @@ void MyTcpServer::slotServerRead(){
         que.exec("select * from players;");
         while (que.next())
     {
-        number = que.value(1).toString();
-        wins = que.value(2).toString();
-        loses = que.value(3).toString();
-        shoots = que.value(4).toString();
-        aim = que.value(5).toString();
-        ships = que.value(6).toString();
-        wins.append(","loses,",",shoots,",",aim,",",ships)
-        stats[number.toLocal8Bit().constData()] = wins.toLocal8Bit().constData();
+    number = que.value(0).toString();  // Номер игрока
+    wins = que.value(1).toString();    // Количество побед
+    loses = que.value(2).toString();   // Количество поражений
+    shoots = que.value(3).toString();  // Количество выстрелов
+    aim = que.value(4).toString();     // Количество попаданий
+    ships = que.value(5).toString();   // Количество потопленных кораблей
+    wins=wins+","+loses+","+shoots+","+aim+","+ships;
+    stats[number.toLocal8Bit().constData()] = wins.toLocal8Bit().constData(); // Перечислены через запятую
     }
     }
     if(func == "set coord") {
@@ -157,30 +158,46 @@ void MyTcpServer::slotServerRead(){
         switch (field[pos1]) {
             case 0:
                 field[pos1] = 1;
-               if (number=2)
+               if (number==2)
+               {
                 que.exec("update players set shoots=shoots+1 where number =2"); // пустые выстрелы
                 number=1;
-                else
+               }
+               else
+                {
                 que.exec("update players set shoots=shoots+1 where number =1");
                 number=2;
-                break;
+               }
+            break;
             case 4:
                 if (field[pos1 - 1] == 4 || field[pos1 + 1] == 4)
+                {
                     field[pos1] = 2;
-                 if (number=2)
+                 if (number==2)
+                {
                 que.exec("update players set shoots=shoots+1,aim=aim+1 where number =2"); // попадание
                 number=1;
+                }
                 else
+                {
                 que.exec("update players set shoots=shoots+1,aim=aim+1 where number =1");
                 number=2;
+                }
+                }
                 else
+                {
                     field[pos1] = 3;
-                if (number=2)
+                if (number==2)
+                {
                 que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =2"); // убил
                 number=1;
+                }
                 else
+                {
                 que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =1");
                 number=2;
+                }
+                }
                 break;
 
         int j = 0;
@@ -190,7 +207,8 @@ void MyTcpServer::slotServerRead(){
                 break;
             }
         }
-            if (j != 0) {
+            if (j != 0)
+            {
                qDebug()<<"Game over, PLAYER 2 WIN";
                que.exec("update users set wins=wins+1 where number =2");
                que.exec("update users set loses=loses+1 where number =1");
@@ -203,7 +221,8 @@ void MyTcpServer::slotServerRead(){
                 break;
             }
         }
-            if (j != 0) {
+            if (j != 0)
+            {
                qDebug()<<"Game over, PLAYER 1 WIN";
                que.exec("update users set wins=wins+1 where number =1");
                que.exec("update users set loses=loses+1 where number =2");
@@ -220,7 +239,7 @@ void MyTcpServer::slotServerRead(){
     if(func == "exit") {
         slotClientDisconnected();
     }
-    //clientSocket -> write(array);    
+    //clientSocket -> write(array);
 }
 void MyTcpServer::slotClientDisconnected(){
     QTcpSocket *clientSocket = (QTcpSocket*)sender();
