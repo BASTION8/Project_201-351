@@ -3,7 +3,11 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
-
+#include <QSqlRecord>
+#include <QSql>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlField>
 #include <QtNetwork>
 #include <QByteArray>
 #include <QDebug>
