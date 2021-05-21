@@ -99,10 +99,6 @@ void MyTcpServer::slotServerRead(){
         clientSocket -> write(array);
     }
     if(func == "stats") {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> parent of b09d819 (Update mytcpserver.cpp)
         QSqlQuery que;                           // подключение к бд
         QString number,wins,loses,shoots,aim,ships;
         que.exec("select * from players;");
@@ -117,12 +113,6 @@ void MyTcpServer::slotServerRead(){
     wins=wins+","+loses+","+shoots+","+aim+","+ships;
     stats[number.toLocal8Bit().constData()] = wins.toLocal8Bit().constData(); // Перечислены через запятую
     }
-<<<<<<< HEAD
-=======
-=======
-        // подключение к бд
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
->>>>>>> parent of b09d819 (Update mytcpserver.cpp)
     }
     if(func == "set coord") {
         std::string player1 = "";
@@ -168,10 +158,6 @@ void MyTcpServer::slotServerRead(){
         switch (field[pos1]) {
             case 0:
                 field[pos1] = 1;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> parent of b09d819 (Update mytcpserver.cpp)
                if (number==2)
                {
                 que.exec("update players set shoots=shoots+1 where number =2"); // пустые выстрелы
@@ -180,16 +166,6 @@ void MyTcpServer::slotServerRead(){
                else
                 {
                 que.exec("update players set shoots=shoots+1 where number =1");
-<<<<<<< HEAD
-=======
-=======
-               if (number=2)
-                que.exec("update users set shoots=shoots+1 where number =2"); // пустые выстрелы
-                number=1;
-                else
-                que.exec("update users set shoots=shoots+1 where number =1");
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
->>>>>>> parent of b09d819 (Update mytcpserver.cpp)
                 number=2;
                }
             break;
@@ -197,7 +173,6 @@ void MyTcpServer::slotServerRead(){
                 if (field[pos1 - 1] == 4 || field[pos1 + 1] == 4)
                 {
                     field[pos1] = 2;
-<<<<<<< HEAD
                  if (number==2)
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1 where number =2"); // попадание
@@ -206,32 +181,12 @@ void MyTcpServer::slotServerRead(){
                 else
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1 where number =1");
-=======
-<<<<<<< HEAD
-                 if (number==2)
-                {
-                que.exec("update players set shoots=shoots+1,aim=aim+1 where number =2"); // попадание
-=======
-                 if (number=2)
-                que.exec("update users set shoots=shoots+1,aim=aim+1 where number =2"); // попадание
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
-                number=1;
-                }
-                else
-<<<<<<< HEAD
-                {
-                que.exec("update players set shoots=shoots+1,aim=aim+1 where number =1");
-=======
-                que.exec("update users set shoots=shoots+1,aim=aim+1 where number =1");
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
->>>>>>> parent of b09d819 (Update mytcpserver.cpp)
                 number=2;
                 }
                 }
                 else
                 {
                     field[pos1] = 3;
-<<<<<<< HEAD
                 if (number==2)
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =2"); // убил
@@ -240,25 +195,6 @@ void MyTcpServer::slotServerRead(){
                 else
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =1");
-=======
-<<<<<<< HEAD
-                if (number==2)
-                {
-                que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =2"); // убил
-=======
-                if (number=2)
-                que.exec("update users set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =2"); // убил
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
-                number=1;
-                }
-                else
-<<<<<<< HEAD
-                {
-                que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =1");
-=======
-                que.exec("update users set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =1");
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
->>>>>>> parent of b09d819 (Update mytcpserver.cpp)
                 number=2;
                 }
                 }
