@@ -99,7 +99,6 @@ void MyTcpServer::slotServerRead(){
         clientSocket -> write(array);
     }
     if(func == "stats") {
-<<<<<<< HEAD
         QSqlQuery que;                           // подключение к бд
         QString number,wins,loses,shoots,aim,ships;
         que.exec("select * from players;");
@@ -114,9 +113,6 @@ void MyTcpServer::slotServerRead(){
     wins=wins+","+loses+","+shoots+","+aim+","+ships;
     stats[number.toLocal8Bit().constData()] = wins.toLocal8Bit().constData(); // Перечислены через запятую
     }
-=======
-        // подключение к бд
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
     }
     if(func == "set coord") {
         std::string player1 = "";
@@ -162,7 +158,6 @@ void MyTcpServer::slotServerRead(){
         switch (field[pos1]) {
             case 0:
                 field[pos1] = 1;
-<<<<<<< HEAD
                if (number==2)
                {
                 que.exec("update players set shoots=shoots+1 where number =2"); // пустые выстрелы
@@ -171,13 +166,6 @@ void MyTcpServer::slotServerRead(){
                else
                 {
                 que.exec("update players set shoots=shoots+1 where number =1");
-=======
-               if (number=2)
-                que.exec("update users set shoots=shoots+1 where number =2"); // пустые выстрелы
-                number=1;
-                else
-                que.exec("update users set shoots=shoots+1 where number =1");
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
                 number=2;
                }
             break;
@@ -185,46 +173,28 @@ void MyTcpServer::slotServerRead(){
                 if (field[pos1 - 1] == 4 || field[pos1 + 1] == 4)
                 {
                     field[pos1] = 2;
-<<<<<<< HEAD
                  if (number==2)
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1 where number =2"); // попадание
-=======
-                 if (number=2)
-                que.exec("update users set shoots=shoots+1,aim=aim+1 where number =2"); // попадание
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
                 number=1;
                 }
                 else
-<<<<<<< HEAD
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1 where number =1");
-=======
-                que.exec("update users set shoots=shoots+1,aim=aim+1 where number =1");
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
                 number=2;
                 }
                 }
                 else
                 {
                     field[pos1] = 3;
-<<<<<<< HEAD
                 if (number==2)
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =2"); // убил
-=======
-                if (number=2)
-                que.exec("update users set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =2"); // убил
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
                 number=1;
                 }
                 else
-<<<<<<< HEAD
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =1");
-=======
-                que.exec("update users set shoots=shoots+1,aim=aim+1,ships=ships+1 where number =1");
->>>>>>> parent of 5918ed3 (Update mytcpserver.cpp)
                 number=2;
                 }
                 }
@@ -240,6 +210,8 @@ void MyTcpServer::slotServerRead(){
             if (j != 0)
             {
                qDebug()<<"Game over, PLAYER 2 WIN";
+               que.exec("update users set wins=wins+1 where number =2");
+               que.exec("update users set loses=loses+1 where number =1");
                slotClientDisconnected();
             }
         j = 0;
@@ -252,6 +224,8 @@ void MyTcpServer::slotServerRead(){
             if (j != 0)
             {
                qDebug()<<"Game over, PLAYER 1 WIN";
+               que.exec("update users set wins=wins+1 where number =1");
+               que.exec("update users set loses=loses+1 where number =2");
                slotClientDisconnected();
             }
         }
