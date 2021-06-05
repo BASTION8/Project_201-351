@@ -83,18 +83,12 @@ void MyTcpServer::slotServerRead(){
         clientSocket -> write(array);
     }
     if(func == "start") {
-        std::string params = "";
-        pos = message.find("&");
-        params = message.substr(pos+1, message.length() - 3);
-        message.erase(0);
 
         array.clear();
-        for(int i=0; i<200; i++) {
-            field[i] = 0;
+        start(field);
+        for(int i=0; i<200; i++)
             array.append(field[i]);
-        }
-        qDebug()<<"params ="<<QString::fromStdString(params)
-               <<"field create";
+        qDebug()<<"field create";
 
         clientSocket -> write(array);
     }
@@ -104,57 +98,38 @@ void MyTcpServer::slotServerRead(){
         que.exec("select * from players;");
         while (que.next())
     {
-    number = que.value(0).toString();  // Номер игрока
-    wins = que.value(1).toString();    // Количество побед
-    loses = que.value(2).toString();   // Количество поражений
-    shoots = que.value(3).toString();  // Количество выстрелов
-    aim = que.value(4).toString();     // Количество попаданий
-    ships = que.value(5).toString();   // Количество потопленных кораблей
-    wins=wins+","+loses+","+shoots+","+aim+","+ships;
-    stats[number.toLocal8Bit().constData()] = wins.toLocal8Bit().constData(); // Перечислены через запятую
+        number = que.value(0).toString();  // Номер игрока
+        wins = que.value(1).toString();    // Количество побед
+        loses = que.value(2).toString();   // Количество поражений
+        shoots = que.value(3).toString();  // Количество выстрелов
+        aim = que.value(4).toString();     // Количество попаданий
+        ships = que.value(5).toString();   // Количество потопленных кораблей
+        wins=wins+","+loses+","+shoots+","+aim+","+ships;
+        stats[number.toLocal8Bit().constData()] = wins.toLocal8Bit().constData(); // Перечислены через запятую
     }
     }
-    if(func == "set coord") {
-        std::string player1 = "";
-        std::string player2 = "";
-        std::string player1_ships = "";
-        std::string player2_ships = "";
-        pos = message.find("&");
-        player1 = message.substr(0, pos);
-        message.erase(0, pos);
-
-        pos = message.find("&");
-        player1_ships = message.substr(0, pos);
-        message.erase(0, pos);
-        for(int i=0; i<100; i++) {
-            field[i] = player1_ships[i];
-        }
-
-        pos = message.find("&");
-        player2 = message.substr(0, pos);
-        message.erase(0, pos);
-
-        pos = message.find("&");
-        player2_ships = message.substr(pos+1, message.length() - 3);
-        message.erase(0);
-        for(int i=100; i<200; i++) {
-            field[i] = player2_ships[i];
-        }
+    if(func == "set_coord") {
+        set_coord(message, pos, field);
         qDebug()<<"field write in";
         array.clear();
         for(int i=0; i<200; i++) {
             array.append(field[i]);
         }
+        qDebug()<<QString::fromStdString(message);
         clientSocket -> write(array);
     }
     if(func == "action"){
-        std::string action = "";                                    // 0 - пусто
-        pos = message.find("&");                                    // 1 - мимо
-        int pos1 = message.find("6");                               // 2 - ранил
-        action = message.substr(pos+1, message.length() - 3);       // 3 - убил
-        message.erase(0);                                           // 4 - корабль
-        QSqlQuery que;                                              // 5 - остров
-                                                                    // 6 - отметка пользователя
+        int pos1 = message.find("6");
+        QSqlQuery que;
+                                                /*
+                                                0 - пусто
+                                                1 - мимо
+                                                2 - ранил
+                                                3 - убил
+                                                4 - корабль
+                                                5 - остров
+                                                6 - отметка пользователя
+                                                */
         switch (field[pos1]) {
             case 0:
                 field[pos1] = 1;
@@ -170,10 +145,10 @@ void MyTcpServer::slotServerRead(){
                }
             break;
             case 4:
-                if (field[pos1 - 1] == 4 || field[pos1 + 1] == 4)
+                if (field[pos1 - 1] == 4 || field[pos1 + 1] == 4 || field[pos1 - 10] == 4 || field[pos1 + 10] == 4)
                 {
                     field[pos1] = 2;
-                 if (number==2)
+                if (number==2)
                 {
                 que.exec("update players set shoots=shoots+1,aim=aim+1 where number =2"); // попадание
                 number=1;
@@ -199,6 +174,19 @@ void MyTcpServer::slotServerRead(){
                 }
                 }
                 break;
+            case 5:
+                field[pos1] = 1;
+               if (number==2)
+               {
+                que.exec("update players set shoots=shoots+1 where number =2"); // пустые выстрелы
+                number=1;
+               }
+               else
+                {
+                que.exec("update players set shoots=shoots+1 where number =1");
+                number=2;
+               }
+            break;
 
         int j = 0;
         for (int i=0; i<100; i++) {
@@ -249,8 +237,5 @@ void MyTcpServer::slotClientDisconnected(){
     qDebug() << QString::fromUtf8("Client is disconnected \n");
 }
 
-/* 04040004440444040400004444000004400404000444
-0040400044404440404000044440000044004040004440
-0404000444044404040000444400000440040400044400
-4040004440444040400004444000004400404000444000
-000444400444004040 */
+/* 040400044404440404000044440000044004040004440040400044404440404000044440000044004040004440040400044404440&40400004444000004400404000444004040004440444040400004444000004400404000444000000444400444004040 */
+// проверка правильно ли стоят острова
