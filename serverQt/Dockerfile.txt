@@ -1,0 +1,11 @@
+
+FROM gcc:latest
+
+COPY . /usr/src/project_201-351-main
+
+WORKDIR /usr/src/project_201-351-main
+
+
+RUN g++ -o main D:\Project_201-351-main\serverQt\echoServer_351.pro.user
+
+CMD ["./main"]
